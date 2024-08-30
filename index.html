@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Justnotes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+        }
+
+        .content {
+            margin: auto;
+            max-width: 900px;
+
+        }
+
+        li {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px 15px;
+            margin: 10px 0;
+            box-shadow: 2px 2px 2px #ddd;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        form {
+            display: flex;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+        .buttonContainer {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+
+
+        .save {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .save:hover {
+            background-color: #6c3483;
+        }
+
+        .edit {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 5px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+
+        }
+
+        .delete {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 5px;
+            margin-left: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit:hover,
+        .delete:hover {
+            background-color: #6c3483;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        input {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+
+
+        h3 {
+            margin: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="content">
+        <h1>Just enter some notes</h1>
+        <p>They are stored on your device, no information is sent anywhere</p>
+
+        <input type="text" id="note" placeholder="Enter a note" onkeypress="onKeyPress" autofocus />
+        <button onclick="saveNote()" class="save">Save</button>
+
+        <ul id="notes"></ul>
+    </div>
+    <script>
+
+        function onKeyPress(event) {
+            if (event.key === 'Enter') {
+                saveNote();
+            }
+        }
+
+        function saveNote() {
+            const inputEl = document.getElementById('note')
+            const note = inputEl.value;
+            inputEl.value = '';
+
+            // get notes from local storage
+            let notes = [];
+            try {
+                notes = JSON.parse(localStorage.getItem('notes')) || [];
+            } catch (err) {
+                console.error(err);
+            }
+
+            // remove invalid notes
+            notes = notes.filter(note => note && note.timestamp && note.note);
+
+            // add new note
+            notes.push({
+                timestamp: Date.now(),
+                note
+            });
+
+            // save notes to local storage
+            localStorage.setItem('notes', JSON.stringify(notes));
+
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            const notesEl = document.getElementById('notes');
+
+            notesEl.innerHTML = '';
+
+
+            notes.forEach(note => {
+                const li = document.createElement('li');
+
+                // header and buttons in a div
+                const header = document.createElement('div');
+                header.className = 'header';
+                li.appendChild(header);
+
+
+                // add timestamp as header
+                const h3 = document.createElement('h3');
+                h3.textContent = new Date(note.timestamp).toLocaleString();
+                header.appendChild(h3);
+
+                // add note as paragraph
+                const p = document.createElement('p');
+                p.textContent = note.note;
+                li.appendChild(p);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'buttonContainer';
+                header.appendChild(buttonContainer);
+
+
+                // add edit button
+                const editButton = document.createElement('button');
+                editButton.textContent = '✏️';
+                editButton.className = 'edit';
+                editButton.onclick = () => {
+                    const newNote = prompt('Enter new note', note.note);
+                    if (newNote) {
+                        const notes = JSON.parse(localStorage.getItem('notes')) || [];
+                        const index = notes.findIndex(n => n.timestamp === note.timestamp);
+                        notes[index].note = newNote;
+                        localStorage.setItem('notes', JSON.stringify(notes));
+                        renderNotes();
+                    }
+                };
+                buttonContainer.appendChild(editButton);
+
+                // add delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = '❌';
+                deleteButton.className = 'delete';
+                deleteButton.onclick = () => {
+
+                    // confirm delete
+                    if (!confirm('Are you sure you want to delete this note?')) {
+                        return;
+                    }
+
+                    const notes = JSON.parse(localStorage.getItem('notes')) || [];
+                    const index = notes.findIndex(n => n.timestamp === note.timestamp);
+                    notes.splice(index, 1);
+                    localStorage.setItem('notes', JSON.stringify(notes));
+                    renderNotes();
+                };
+                buttonContainer.appendChild(deleteButton);
+
+                notesEl.insertBefore(li, notesEl.firstChild);
+            });
+        }
+
+        renderNotes();
+
+
+    </script>
+</body>
+
+</html>
