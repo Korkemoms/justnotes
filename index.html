@@ -4,26 +4,30 @@
 <head>
     <title>Justnotes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            margin: 20px;
+            font-family: "Ubuntu", sans-serif;
+            padding: 20px;
+            background-color: #fefefe;
         }
 
         .content {
             margin: auto;
-            max-width: 900px;
-
+            max-width: 700px;
         }
 
         li {
             border: 1px solid #ddd;
             border-radius: 5px;
-            padding: 10px 15px;
+            padding: 15px 15px;
             margin: 10px 0;
-            box-shadow: 2px 2px 2px #ddd;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+            background-color: #fff;
         }
 
         ul {
@@ -53,9 +57,13 @@
             color: white;
             border: none;
             padding: 10px;
-            margin-left: 10px;
             border-radius: 5px;
             cursor: pointer;
+            box-sizing: border-box;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+
         }
 
         .save:hover {
@@ -88,25 +96,48 @@
             background-color: #6c3483;
         }
 
-        input {
+        .main-entry {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
-        }
-
-        input {
-            flex: 1;
-            max-width: 300px;
+            width: 100%;
+            box-sizing: border-box;
+            height: 100px;
+            font-size: 16px;
         }
 
         h1 {
             color: #333;
         }
 
-
-
         h3 {
             margin: 0;
+        }
+
+        .card-edit {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            height: 100px;
+            font-size: 16px;
+        }
+
+        .card-edit-button {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card-edit-button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+            gap: 10px;
         }
     </style>
 
@@ -117,19 +148,12 @@
         <h1>Just enter some notes</h1>
         <p>They are stored on your device, no information is sent anywhere</p>
 
-        <input type="text" id="note" placeholder="Enter a note" onkeypress="onKeyPress" autofocus />
+        <textarea class="main-entry" type="text" id="note" placeholder="Enter a note" autofocus></textarea>
         <button onclick="saveNote()" class="save">Save</button>
 
         <ul id="notes"></ul>
     </div>
     <script>
-
-        function onKeyPress(event) {
-            if (event.key === 'Enter') {
-                saveNote();
-            }
-        }
-
         function saveNote() {
             const inputEl = document.getElementById('note')
             const note = inputEl.value;
@@ -176,7 +200,20 @@
 
                 // add timestamp as header
                 const h3 = document.createElement('h3');
-                h3.textContent = new Date(note.timestamp).toLocaleString();
+                // format the date nicely
+                const currentLocale = navigator.language;
+                let dateStr = new Date(note.timestamp).toLocaleString(currentLocale, {
+                    month: 'short',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    weekday: 'short',
+                    hour12: false
+                });
+
+                h3.textContent = dateStr;
+
+
                 header.appendChild(h3);
 
                 // add note as paragraph
@@ -194,14 +231,43 @@
                 editButton.textContent = '✏️';
                 editButton.className = 'edit';
                 editButton.onclick = () => {
-                    const newNote = prompt('Enter new note', note.note);
-                    if (newNote) {
+                    // show textarea in this note
+                    const p = li.querySelector('p');
+                    const textarea = document.createElement('textarea');
+                    textarea.className = 'card-edit';
+                    textarea.value = p.textContent;
+                    li.replaceChild(textarea, p);
+
+                    const editButtonContainer = document.createElement('div');
+                    editButtonContainer.className = 'card-edit-button-container';
+                    li.appendChild(editButtonContainer);
+
+
+                    // add cancel button
+                    const cancelButton = document.createElement('button');
+                    cancelButton.textContent = 'Cancel';
+                    cancelButton.className = 'card-edit-button';
+                    cancelButton.onclick = () => {
+                        renderNotes();
+                    };
+                    editButtonContainer.appendChild(cancelButton);
+
+
+
+
+                    // add save button
+                    const saveButton = document.createElement('button');
+                    saveButton.textContent = 'Save';
+                    saveButton.className = 'card-edit-button';
+                    saveButton.onclick = () => {
                         const notes = JSON.parse(localStorage.getItem('notes')) || [];
                         const index = notes.findIndex(n => n.timestamp === note.timestamp);
-                        notes[index].note = newNote;
+                        notes[index].note = textarea.value;
                         localStorage.setItem('notes', JSON.stringify(notes));
                         renderNotes();
-                    }
+                    };
+                    editButtonContainer.appendChild(saveButton);
+
                 };
                 buttonContainer.appendChild(editButton);
 
