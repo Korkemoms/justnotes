@@ -97,9 +97,9 @@ db.version(1).stores({
 });
 
 // Helper function to save a note to the database
-async function saveNoteToDexie(note) {
+async function saveNoteToDexie(note, timestamp = Date.now()) {
   try {
-    await db.notes.add({ note, timestamp: Date.now() });
+    await db.notes.add({ note, timestamp });
   } catch (err) {
     console.error("Failed to save note:", err);
   }
@@ -141,7 +141,7 @@ async function deleteNote(note) {
 
 function migrateFromLocalStorageToDexie() {
   const notes = JSON.parse(localStorage.getItem("notes")) || [];
-  notes.forEach((note) => saveNoteToDexie(note));
+  notes.forEach((note) => saveNoteToDexie(note.note, note.timestamp));
 
   // delete notes from local storage
   localStorage.removeItem("notes");
