@@ -31,6 +31,10 @@ form {
   display: flex;
 }
 
+.note-body {
+  white-space: pre-wrap;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
