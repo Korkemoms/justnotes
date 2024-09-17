@@ -11,7 +11,7 @@ const contentDiv = div(
     placeholder: "Enter a note",
     autofocus: true,
   }),
-  button({ onclick: saveNote, class: "save" }, "Save"),
+  button({ onclick: saveNote, class: "save-button" }, "Save"),
   ul({ id: "notes" })
 );
 
@@ -41,10 +41,13 @@ async function renderNotes() {
         div(
           { class: "buttonContainer" },
           button(
-            { class: "edit", onclick: () => editNote(note, noteItem) },
+            { class: "edit-button", onclick: () => editNote(note, noteItem) },
             "✏️"
           ),
-          button({ class: "delete", onclick: () => deleteNote(note) }, "❌")
+          button(
+            { class: "delete-button", onclick: () => deleteNote(note) },
+            "❌"
+          )
         )
       ),
       p({ class: "note-body" }, note.note)

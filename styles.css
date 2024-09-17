@@ -46,7 +46,7 @@ form {
   flex-wrap: nowrap;
 }
 
-.save {
+.save-button {
   border: none;
   padding: 10px;
   border-radius: 5px;
@@ -57,7 +57,7 @@ form {
   margin-bottom: 20px;
 }
 
-.edit {
+.edit-button {
   background: transparent;
   border: none;
   padding: 5px;
@@ -66,7 +66,7 @@ form {
   cursor: pointer;
 }
 
-.delete {
+.delete-button {
   background: transparent;
   border: none;
   padding: 5px;
@@ -114,105 +114,80 @@ h3 {
 }
 
 /****************************************************
- * Theme
+ * Light Mode
  ****************************************************/
+:root {
+  --primary-color: #8e44ad;
+  --secondary-color: #6c3483;
+  --background-color: #fdfdfd;
+  --text-color: #333;
+  --card-color: #fff;
+  --border-color: #ddd;
+}
+
+/****************************************************
+ * Dark Mode
+ ****************************************************/
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #8e44ad;
+    --secondary-color: #6c3483;
+    --background-color: #333;
+    --text-color: #fefefe;
+    --card-color: #444;
+    --border-color: #555;
+  }
+}
 
 body {
-  background-color: #fefefe;
-  color: #333;
+  background-color: var(--background-color);
+}
+
+* {
+  color: var(--text-color);
 }
 
 li {
-  background-color: #fff;
-  color: #333;
+  background-color: var(--card-color);
 }
 
 .header {
-  background-color: #fff;
+  background-color: var(--card-color);
 }
 
-.save {
-  background-color: #8e44ad;
+.save-button {
+  background-color: var(--primary-color);
+  color: var(--background-color);
 }
 
-.save:hover {
-  background-color: #6c3483;
+.save-button:hover {
+  background-color: var(--secondary-color);
 }
 
-.edit {
-  color: #fff;
+.edit-button {
+  color: var(--card-color);
 }
 
-.delete {
-  color: #fff;
+.delete-button {
+  color: var(--card-color);
 }
 
-.edit:hover,
-.delete:hover {
-  background-color: #6c3483;
+.edit-button:hover,
+.delete-button:hover {
+  background-color: var(--secondary-color);
 }
 
 .main-entry {
-  background-color: #fff;
-  color: #333;
+  background-color: var(--card-color);
+  color: var(--background-color);
+  border-color: var(--border-color);
 }
 
 .card-edit {
-  background-color: #fff;
-  color: #333;
+  background-color: var(--card-color);
 }
 
 .card-edit-button {
-  background-color: #8e44ad;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #333;
-    color: #fff;
-  }
-
-  li {
-    background-color: #444;
-    color: #fff;
-  }
-
-  .header {
-    background-color: #444;
-  }
-
-  .save {
-    background-color: #8e44ad;
-  }
-
-  .save:hover {
-    background-color: #6c3483;
-  }
-
-  .edit {
-    color: #fff;
-  }
-
-  .delete {
-    color: #fff;
-  }
-
-  .edit:hover,
-  .delete:hover {
-    background-color: #6c3483;
-  }
-
-  .main-entry {
-    background-color: #444;
-    color: #fff;
-  }
-
-  .card-edit {
-    background-color: #444;
-    color: #fff;
-  }
-
-  .card-edit-button {
-    background-color: #8e44ad;
-  }
+  background-color: var(--primary-color);
+  color: var(--background-color);
 }
