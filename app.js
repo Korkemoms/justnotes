@@ -23,7 +23,7 @@ async function renderNotes() {
 
   notesEl.innerHTML = "";
 
-  notes.forEach((note) => {
+  [...notes].reverse().forEach((note) => {
     const currentLocale = navigator.language;
     let dateStr = new Date(note.timestamp).toLocaleString(currentLocale, {
       month: "short",
@@ -47,7 +47,7 @@ async function renderNotes() {
           button({ class: "delete", onclick: () => deleteNote(note) }, "❌")
         )
       ),
-      p(note.note)
+      p({ class: "note-body" }, note.note)
     );
 
     van.add(notesEl, noteItem);
