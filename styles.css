@@ -1,0 +1,214 @@
+body {
+  font-family: "Ubuntu", sans-serif;
+  padding: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+}
+
+.content {
+  margin: auto;
+  max-width: 700px;
+}
+
+li {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px 15px;
+  margin: 10px 0;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+form {
+  display: flex;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.save {
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.edit {
+  background: transparent;
+  border: none;
+  padding: 5px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete {
+  background: transparent;
+  border: none;
+  padding: 5px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.main-entry {
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 100px;
+  font-size: 16px;
+}
+
+h3 {
+  margin: 0;
+}
+
+.card-edit {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  height: 100px;
+  font-size: 16px;
+}
+
+.card-edit-button {
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card-edit-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+/****************************************************
+ * Theme
+ ****************************************************/
+
+body {
+  background-color: #fefefe;
+  color: #333;
+}
+
+li {
+  background-color: #fff;
+  color: #333;
+}
+
+.header {
+  background-color: #fff;
+}
+
+.save {
+  background-color: #8e44ad;
+}
+
+.save:hover {
+  background-color: #6c3483;
+}
+
+.edit {
+  color: #fff;
+}
+
+.delete {
+  color: #fff;
+}
+
+.edit:hover,
+.delete:hover {
+  background-color: #6c3483;
+}
+
+.main-entry {
+  background-color: #fff;
+  color: #333;
+}
+
+.card-edit {
+  background-color: #fff;
+  color: #333;
+}
+
+.card-edit-button {
+  background-color: #8e44ad;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+    color: #fff;
+  }
+
+  li {
+    background-color: #444;
+    color: #fff;
+  }
+
+  .header {
+    background-color: #444;
+  }
+
+  .save {
+    background-color: #8e44ad;
+  }
+
+  .save:hover {
+    background-color: #6c3483;
+  }
+
+  .edit {
+    color: #fff;
+  }
+
+  .delete {
+    color: #fff;
+  }
+
+  .edit:hover,
+  .delete:hover {
+    background-color: #6c3483;
+  }
+
+  .main-entry {
+    background-color: #444;
+    color: #fff;
+  }
+
+  .card-edit {
+    background-color: #444;
+    color: #fff;
+  }
+
+  .card-edit-button {
+    background-color: #8e44ad;
+  }
+}
