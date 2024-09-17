@@ -99,25 +99,12 @@ h3 {
   font-size: 16px;
 }
 
-.card-edit-button {
-  border: none;
-  padding: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.card-edit-button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 10px;
-  gap: 10px;
-}
-
 /****************************************************
  * Light Mode
  ****************************************************/
 :root {
   --primary-color: #8e44ad;
+  --primary-contrast-color: #fff;
   --secondary-color: #6c3483;
   --background-color: #fdfdfd;
   --text-color: #333;
@@ -131,6 +118,7 @@ h3 {
 @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #8e44ad;
+    --primary-contrast-color: #fff;
     --secondary-color: #888;
     --background-color: #333;
     --text-color: #fefefe;
@@ -157,7 +145,7 @@ li {
 
 .save-button {
   background-color: var(--primary-color);
-  color: var(--background-color);
+  color: var(--primary-contrast-color);
 }
 
 .save-button:hover {
@@ -179,15 +167,10 @@ li {
 
 .main-entry {
   background-color: var(--card-color);
-  color: var(--background-color);
+  color: var(--text-color);
   border-color: var(--border-color);
 }
 
 .card-edit {
   background-color: var(--card-color);
-}
-
-.card-edit-button {
-  background-color: var(--primary-color);
-  color: var(--background-color);
 }
