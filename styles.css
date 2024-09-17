@@ -131,7 +131,7 @@ h3 {
 @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #8e44ad;
-    --secondary-color: #6c3483;
+    --secondary-color: #888;
     --background-color: #333;
     --text-color: #fefefe;
     --card-color: #444;

@@ -1,4 +1,4 @@
-const { div, h1, p, textarea, button, ul, li, h3 } = van.tags;
+const { div, h1, p, textarea, button, ul, li, h3, input } = van.tags;
 
 const contentDiv = div(
   { class: "content" },
@@ -23,9 +23,9 @@ async function renderNotes() {
 
   notesEl.innerHTML = "";
 
-  [...notes].reverse().forEach((note) => {
+  [...notes].reverse().forEach((noteObj) => {
     const currentLocale = navigator.language;
-    let dateStr = new Date(note.timestamp).toLocaleString(currentLocale, {
+    let dateStr = new Date(noteObj.timestamp).toLocaleString(currentLocale, {
       month: "short",
       day: "2-digit",
       hour: "2-digit",
@@ -34,61 +34,113 @@ async function renderNotes() {
       hour12: false,
     });
 
-    const noteItem = li(
+    const noteEl = li(
+      { id: "note-" + noteObj.id },
       div(
         { class: "header" },
         h3(dateStr),
         div(
           { class: "buttonContainer" },
           button(
-            { class: "edit-button", onclick: () => editNote(note, noteItem) },
+            {
+              class: "edit-button",
+              id: "edit-button-" + noteObj.id,
+              onclick: () => editNote(noteObj),
+            },
             "✏️"
           ),
           button(
-            { class: "delete-button", onclick: () => deleteNote(note) },
+            {
+              class: "delete-button",
+              id: "delete-button-" + noteObj.id,
+              onclick: () => deleteNote(noteObj),
+            },
             "❌"
           )
         )
       ),
-      p({ class: "note-body" }, note.note)
+      p({ class: "note-body" }, noteObj.note)
     );
 
-    van.add(notesEl, noteItem);
+    van.add(notesEl, noteEl);
   });
 }
 
-function editNote(note, noteItem) {
-  const pElement = noteItem.querySelector("p");
+function formatLocalDate(date) {
+  const pad = (num) => num.toString().padStart(2, "0");
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1); // Months are zero-based
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+function editNote(noteObj) {
+  const noteEl = document.getElementById("note-" + noteObj.id);
+  const pElement = noteEl.querySelector("p");
   const textareaElement = textarea(
     { class: "card-edit" },
     pElement.textContent
   );
-  noteItem.replaceChild(textareaElement, pElement);
+  noteEl.replaceChild(textareaElement, pElement);
 
-  const editButtonContainer = div(
-    { class: "card-edit-button-container" },
+  const dateInputElement = input(
+    {
+      type: "datetime-local",
+      value: formatLocalDate(new Date(noteObj.timestamp)),
+    },
+    pElement.textContent
+  );
+  noteEl.querySelector("h3").replaceWith(dateInputElement);
+
+  const onSave = async () => {
+    saveEditedNote(
+      noteObj,
+      textareaElement.value,
+      // new Date(dateInputElement.value).getTime()
+      new Date(dateInputElement.value).getTime()
+    );
+
+    renderNotes();
+  };
+
+  const onCancel = () => {
+    renderNotes();
+  };
+
+  // update the "edit-button-" + noteObj.id,
+  // to save the changes
+  const editButtonContainer = noteEl.querySelector(".buttonContainer");
+  editButtonContainer.innerHTML = "";
+  van.add(
+    editButtonContainer,
     button(
-      { class: "card-edit-button", onclick: () => renderNotes() },
-      "Cancel"
+      {
+        class: "edit-button",
+        id: "edit-button-" + noteObj.id,
+        onclick: onSave,
+      },
+      "✅"
     ),
     button(
       {
-        class: "card-edit-button",
-        onclick: () => saveEditedNote(note, textareaElement.value),
+        class: "delete-button",
+        id: "delete-button-" + noteObj.id,
+        onclick: onCancel,
       },
-      "Save"
+      "❌"
     )
   );
-
-  van.add(noteItem, editButtonContainer);
 }
 
 function saveNote() {
   const inputEl = document.getElementById("note");
-  const note = inputEl.value;
+  const noteText = inputEl.value;
   inputEl.value = "";
 
-  saveNoteToDexie(note);
+  saveNoteToDexie(noteText);
 
   renderNotes();
 }
@@ -100,9 +152,9 @@ db.version(1).stores({
 });
 
 // Helper function to save a note to the database
-async function saveNoteToDexie(note, timestamp = Date.now()) {
+async function saveNoteToDexie(noteText, timestamp = Date.now()) {
   try {
-    await db.notes.add({ note, timestamp });
+    await db.notes.add({ note: noteText, timestamp });
   } catch (err) {
     console.error("Failed to save note:", err);
   }
@@ -119,23 +171,25 @@ async function getNotesFromDexie() {
 }
 
 // Update an existing note in the database
-async function saveEditedNote(note, newText) {
+async function saveEditedNote(noteObj, newText, timestamp) {
   try {
-    await db.notes.update(note.id, { note: newText });
-    renderNotes();
+    await db.notes.update(noteObj.id, {
+      note: newText,
+      timestamp: timestamp,
+    });
   } catch (err) {
     console.error("Failed to update note:", err);
   }
 }
 
 // Delete a note from the database
-async function deleteNote(note) {
+async function deleteNote(noteObj) {
   if (!confirm("Are you sure you want to delete this note?")) {
     return;
   }
 
   try {
-    await db.notes.delete(note.id);
+    await db.notes.delete(noteObj.id);
     renderNotes();
   } catch (err) {
     console.error("Failed to delete note:", err);
@@ -144,7 +198,7 @@ async function deleteNote(note) {
 
 function migrateFromLocalStorageToDexie() {
   const notes = JSON.parse(localStorage.getItem("notes")) || [];
-  notes.forEach((note) => saveNoteToDexie(note.note, note.timestamp));
+  notes.forEach((noteObj) => saveNoteToDexie(noteObj.note, noteObj.timestamp));
 
   // delete notes from local storage
   localStorage.removeItem("notes");
