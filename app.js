@@ -18,12 +18,15 @@ const contentDiv = div(
 van.add(document.body, contentDiv);
 
 async function renderNotes() {
-  const notes = await getNotesFromDexie();
+  let notes = await getNotesFromDexie();
   const notesEl = document.getElementById("notes");
 
   notesEl.innerHTML = "";
 
-  [...notes].reverse().forEach((noteObj) => {
+  // order
+  notes = notes.sort((a, b) => b.timestamp - a.timestamp);
+
+  notes.forEach((noteObj) => {
     const currentLocale = navigator.language;
     let dateStr = new Date(noteObj.timestamp).toLocaleString(currentLocale, {
       month: "short",
